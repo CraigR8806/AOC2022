@@ -14,8 +14,6 @@ class RockPaperScissorsRules(Rules):
         pointsMe=self._mapStr2Number(me) + basePointsMe
         pointsYou=self._mapStr2Number(you) + basePointsYou
 
-        print(you + " " + me + " " + str(result) + " " + str(pointsYou) + " " + str(pointsMe))
-
         return (pointsYou, pointsMe)
 
 
