@@ -22,9 +22,8 @@ def parseInput(lines:list):
             for stack in range(stackCount):
                 stacks.append([])
         
-        stackData=[match[1] for match in re.findall("(\[[A-Z]\]| {2,3})", line)]
+        stackData=[match[1] for match in re.findall("(\[[A-Z]\]| {2,5})", line)]
         if len(re.findall('[A-Z]', str.join('', stackData)))>0:
-
             for stack,data in zip(stacks,stackData):
                 if data != " ":
                     stack.append(data)
@@ -40,28 +39,11 @@ def executeMove(stacks, move:Move):
     stacks[move.getFrom()]=stacks[move.getFrom()][:-move.getNumberToMove()]
 
 def readTheTop(stacks):
-    return "".join([stack[-1] for stack in stacks])
-
-
-
-    
-
-
-    
-
-
-
-
-
-
-
-
+    return "".join([stack[-1] if len(stack)>0 else " " for stack in stacks])
 
 
 sampleInputLines=getStripedLinesFromFile('src/1205/sampleInput.data')
 inputLines=getStripedLinesFromFile('src/1205/input.data')
-
-
 
 
 moveList, stacks=parseInput(sampleInputLines)
