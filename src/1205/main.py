@@ -32,9 +32,10 @@ def parseInput(lines:list):
     return moveList,stacks
 
 
-def executeMove(stacks, move:Move):
+def executeMove(stacks, move:Move, crateMoverVersion):
     pulled=stacks[move.getFrom()][-move.getNumberToMove():]
-    pulled.reverse()
+    if crateMoverVersion == 9000:
+        pulled.reverse()
     stacks[move.getTo()].extend(pulled)
     stacks[move.getFrom()]=stacks[move.getFrom()][:-move.getNumberToMove()]
 
@@ -48,16 +49,28 @@ inputLines=getStripedLinesFromFile('src/1205/input.data')
 
 moveList, stacks=parseInput(sampleInputLines)
 for move in moveList:
-    executeMove(stacks, move)
+    executeMove(stacks, move, 9000)
 
 print(readTheTop(stacks))
 
 moveList, stacks=parseInput(inputLines)
 for move in moveList:
-    executeMove(stacks, move)
+    executeMove(stacks, move, 9000)
 
 print(readTheTop(stacks))
 
 
+sampleInputLines=getStripedLinesFromFile('src/1205/sampleInput.data')
+inputLines=getStripedLinesFromFile('src/1205/input.data')
 
+moveList, stacks=parseInput(sampleInputLines)
+for move in moveList:
+    executeMove(stacks, move, 9001)
 
+print(readTheTop(stacks))
+
+moveList, stacks=parseInput(inputLines)
+for move in moveList:
+    executeMove(stacks, move, 9001)
+
+print(readTheTop(stacks))
