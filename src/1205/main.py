@@ -34,7 +34,7 @@ def parseInput(lines:list):
 
 
 def executeMove(stacks, move:Move):
-    pulled=list(stacks[move.getFrom()][-move.getNumberToMove():])
+    pulled=stacks[move.getFrom()][-move.getNumberToMove():]
     pulled.reverse()
     stacks[move.getTo()].extend(pulled)
     stacks[move.getFrom()]=stacks[move.getFrom()][:-move.getNumberToMove()]
@@ -64,11 +64,11 @@ inputLines=getStripedLinesFromFile('src/1205/input.data')
 
 
 
-# moveList, stacks=parseInput(sampleInputLines)
-# for move in moveList:
-#     executeMove(stacks, move)
+moveList, stacks=parseInput(sampleInputLines)
+for move in moveList:
+    executeMove(stacks, move)
 
-# print(readTheTop(stacks))
+print(readTheTop(stacks))
 
 moveList, stacks=parseInput(inputLines)
 for move in moveList:
