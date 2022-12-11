@@ -1,4 +1,5 @@
 from monkey import Monkey
+from functools import reduce
 import math
 import re
 
@@ -37,23 +38,25 @@ def parseDemMonkies(lines):
             monkeyInfo['testF'] = testFM[0]
 
         if len(monkeyInfo) == 6:
-            monkies.append(Monkey(monkeyInfo['startingItems'], monkeyInfo['operation'], str(monkeyInfo['testT']) + " if int(math.modf(int(self.items[0])/int(" + str(monkeyInfo['test']) + "))[0])==0 else "  + str(monkeyInfo['testF'])))
+            monkies.append(Monkey(monkeyInfo['startingItems'], monkeyInfo['operation'], str(monkeyInfo['testT']) + " if itemOut%" + str(monkeyInfo['test']) + "==0 else "  + str(monkeyInfo['testF'])))
             monkeyInfo.clear()
 
     return monkies
 
 def processRounds(rounds:int, monkies:list):
     for round in range(rounds):
+        print(round)
+        [print(monkey.items) for monkey in monkies]
         for monkey in monkies:
             for items in range(monkey.itemCount()):
                 monkey.inspect()
                 item,toMonkey=monkey.evaluateMonkeyLogic()
                 monkies[toMonkey].catchItem(item)
 
-    for monkey in monkies:
-        print(monkey.items)
+    monkeyBusiness=reduce(lambda a,b:a.getInspectionCount()*b.getInspectionCount(), sorted(monkies, key=lambda x:x.getInspectionCount(), reverse=True)[:2])
+    return monkeyBusiness
 
-monkies=parseDemMonkies(getStripedLinesFromFile('src/1211/sampleInput.data'))
-processRounds(1, monkies)
-
-print(math.modf(22/2))
+sampleMonkies=parseDemMonkies(getStripedLinesFromFile('src/1211/sampleInput.data'))
+monkies=parseDemMonkies(getStripedLinesFromFile('src/1211/input.data'))
+print(processRounds(40, sampleMonkies))
+# print(processRounds(1000, monkies))
