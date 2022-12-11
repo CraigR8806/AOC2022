@@ -1,3 +1,4 @@
+from copy import deepcopy
 from monkey import Monkey
 from functools import reduce
 import math
@@ -8,6 +9,12 @@ def getStripedLinesFromFile(fn):
     out=[]
     with open(fn, 'r') as file:
         out=[line.strip('\n') for line in file.readlines()]
+    return out
+
+def findLeastCommonMultiple(divisors:list)->int:
+    out=max(divisors)
+    while not all([out % divisor == 0 for divisor in divisors]):
+        out+=1
     return out
 
 
@@ -38,19 +45,21 @@ def parseDemMonkies(lines):
             monkeyInfo['testF'] = testFM[0]
 
         if len(monkeyInfo) == 6:
-            monkies.append(Monkey(monkeyInfo['startingItems'], monkeyInfo['operation'], str(monkeyInfo['testT']) + " if itemOut%" + str(monkeyInfo['test']) + "==0 else "  + str(monkeyInfo['testF'])))
+            monkies.append(Monkey(monkeyInfo['startingItems'], monkeyInfo['operation'], monkeyInfo['test'], monkeyInfo['testT'], monkeyInfo['testF']))
             monkeyInfo.clear()
 
     return monkies
 
-def processRounds(rounds:int, monkies:list):
+def processRounds(rounds:int, monkies:list, partTwo=False):
+
+    divisors=[monkey.getDivisor() for monkey in monkies]
+    leastCommonMultiple=findLeastCommonMultiple(divisors)
+
     for round in range(rounds):
-        print(round)
-        [print(monkey.items) for monkey in monkies]
         for monkey in monkies:
             for items in range(monkey.itemCount()):
-                monkey.inspect()
-                item,toMonkey=monkey.evaluateMonkeyLogic()
+                monkey.inspect(leastCommonMultiple, partTwo)
+                item,toMonkey=monkey.evaluateMonkeyLogic(partTwo)
                 monkies[toMonkey].catchItem(item)
 
     monkeyBusiness=reduce(lambda a,b:a.getInspectionCount()*b.getInspectionCount(), sorted(monkies, key=lambda x:x.getInspectionCount(), reverse=True)[:2])
@@ -58,5 +67,8 @@ def processRounds(rounds:int, monkies:list):
 
 sampleMonkies=parseDemMonkies(getStripedLinesFromFile('src/1211/sampleInput.data'))
 monkies=parseDemMonkies(getStripedLinesFromFile('src/1211/input.data'))
-print(processRounds(40, sampleMonkies))
-# print(processRounds(1000, monkies))
+print(processRounds(20, deepcopy(sampleMonkies)))
+print(processRounds(20, deepcopy(monkies)))
+
+print(processRounds(10000, deepcopy(sampleMonkies), True))
+print(processRounds(10000, deepcopy(monkies), True))
