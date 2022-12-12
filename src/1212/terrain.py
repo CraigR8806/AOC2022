@@ -1,5 +1,5 @@
 from node import Node
-
+import math
 
 
 
@@ -20,7 +20,7 @@ class Terrain:
             except:
                 pass
         grid[self.start[0]][self.start[1]] = 0
-        grid[self.end[0]][self.end[0]] = 25
+        grid[self.end[0]][self.end[1]] = 25
 
         self.grid=[]
         for y in range(len(grid)):
@@ -43,6 +43,9 @@ class Terrain:
                 if ny < maxY-1:
                     node.addNeighbor(self.grid[ny+1][nx])
 
+                node.sortNeighbors()
+
+        self.costCache = math.inf
 
     def __getitem__(self, indicies):
         if not isinstance(indicies, tuple):
@@ -60,3 +63,8 @@ class Terrain:
     def getEnd(self):
         return self.end
         
+    def setMinCostCache(self, cost:int):
+        self.costCache = cost
+
+    def getMinCostCache(self):
+        return self.costCache
