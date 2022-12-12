@@ -13,18 +13,14 @@ def convertCharToHeight(char):
 
 def parseTerrain(lines):
     return Terrain([list(map(lambda x:convertCharToHeight(x), re.findall("([a-zSE])", line))) for line in lines])
+
+
     
 
 
 
-sampleTerrain=parseTerrain(getStripedLinesFromFile('src/1212/sampleInput.data'))
-terrain=parseTerrain(getStripedLinesFromFile('src/1212/input.data'))
+sampleTerrain=parseTerrain(getStripedLinesFromFile('AOC2022/src/1212/sampleInput.data'))
+terrain=parseTerrain(getStripedLinesFromFile('AOC2022/src/1212/input.data'))
 
 
-
-print(sampleTerrain.getStart())
-print(sampleTerrain.getEnd())
-
-
-print(terrain.getStart())
-print(terrain.getEnd())
+print(sampleTerrain.findShortestPath())
