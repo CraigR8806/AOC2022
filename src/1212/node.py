@@ -13,38 +13,46 @@ class Node:
         self.neighbors = []
         self.terrain = terrain
         self.hash=hash(self.pos)
-        self.chain=[]
+        self.cameFrom=None
         self.cachedMinFromHere=math.inf
+        self.cachedChain=None
 
-    def findit(self, chainIn:list, costInit=0):
+    def findit(self, cameFrom=None, costInit=0):
         costs=[]
+        self.cameFrom=cameFrom
+        self.cachedChain=None
         if self.cachedMinFromHere != math.inf:
             return costInit + self.cachedMinFromHere
-        self.chain.extend(chainIn)
+        
         
         if self.pos == self.terrain.getEnd():
             self.terrain.setMinCostCache(costInit)
             return costInit
 
-        chainIn.append(self.pos)
+       
+        chain=self.getCameFrom()
+        
+
         for neighbor in self.neighbors:
             cost=costInit + self.calculateCost(neighbor)
-            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor.pos in self.chain:
+            
+
+            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor.pos in chain:
                 continue
-            neighborsShortestCost=neighbor.findit(chainIn, cost)
+            neighborsShortestCost=neighbor.findit(self, cost)
             if neighborsShortestCost is not None:
                 costs.append(neighborsShortestCost)
-        
-        self.chain = []
         
         
         if len(costs) <= 0:
             return None
-        chainIn.remove(self.pos)
-
+        
         lowestCost=sorted(costs)[0]
 
         self.cachedMinFromHere=lowestCost-costInit
+
+        if self.terrain.getMinCostCache() != math.inf:
+            print()
         
         return lowestCost
 
@@ -79,6 +87,17 @@ class Node:
     
     def getValue(self):
         return self.value
+
+    def getCameFrom(self):
+        if self.cachedChain is not None:
+            return self.cachedChain
+        tmp=[]
+        if self.cameFrom is not None:
+            tmp=self.cameFrom.getCameFrom()
+        tmp.append(self.pos)
+        self.cachedChain=tmp[:]
+    
+        return tmp
 
     def __eq__(self, o):
         return self.pos == o.pos

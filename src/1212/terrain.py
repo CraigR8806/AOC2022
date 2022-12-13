@@ -54,7 +54,7 @@ class Terrain:
         return self.grid[indicies[0]][indicies[1]]
 
     def findShortestPath(self):
-        return self.grid[self.start[0]][self.start[1]].findit([])
+        return self.grid[self.start[0]][self.start[1]].findit()
 
 
     def getStart(self):
