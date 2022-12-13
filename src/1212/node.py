@@ -1,4 +1,4 @@
-from copy import copy
+from copy import copy, deepcopy
 from functools import reduce
 import math
 
@@ -12,19 +12,21 @@ class Node:
         self.value = value
         self.neighbors = []
         self.terrain = terrain
-        self.hash=hash(self.pos)
         self.cachedMinFromHere=math.inf
+        self.cachedChainFromHere=[]
 
     def findit(self, chainIn:list, cameFrom=None, costInit=0):
         costs=[]
         if self.cachedMinFromHere != math.inf:
             self.terrain.clearNodesVisited()
+            # self.terrain.addPath(deepcopy(chainIn))
             return costInit + self.cachedMinFromHere
         self.terrain.addNodeVisited(self.pos)
         
         if self.pos == self.terrain.getEnd():
             self.terrain.setMinCostCache(costInit)
             self.terrain.clearNodesVisited()
+            self.terrain.addPath(deepcopy(chainIn))
             return costInit
         
 
@@ -50,10 +52,14 @@ class Node:
         
         return lowestCost
 
+    def getX(self):
+        return self.pos[1]
+
+    def getY(self):
+        return self.pos[0]
+
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor)
-        
-            
 
     def calculateCost(self, prev):
         prevV=prev
@@ -63,35 +69,8 @@ class Node:
         delta=self.value - prevV
         return 1
 
-    def getPos(self):
-        return self.pos
-
-    def getX(self):
-        return self.pos[1]
-
-    def getY(self):
-        return self.pos[0]
-
-    def __hash__(self):
-        return self.hash
-
     def sortNeighbors(self):
         self.neighbors.sort(key=lambda n:math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2)))
 
-    
     def getValue(self):
         return self.value
-
-    def getCameFrom(self):
-        if self.cachedChain is not None:
-            return self.cachedChain
-        tmp=[]
-        if self.cameFrom is not None:
-            tmp=self.cameFrom.getCameFrom()
-        tmp.append(self.pos)
-        self.cachedChain=tmp[:]
-    
-        return tmp
-
-    def __eq__(self, o):
-        return self.pos == o.pos

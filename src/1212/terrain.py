@@ -1,4 +1,5 @@
 from node import Node
+from copy import deepcopy
 import math
 
 
@@ -47,19 +48,25 @@ class Terrain:
 
         self.costCache = math.inf
         self.nodesVisited=[]
+        self.paths = []
 
-    def __getitem__(self, indicies):
-        if not isinstance(indicies, tuple):
-            indicies = tuple(indicies)
+    # def __getitem__(self, indicies):
+    #     if not isinstance(indicies, tuple):
+    #         indicies = tuple(indicies)
 
-        return self.grid[indicies[0]][indicies[1]]
+    #     return self.grid[indicies[0]][indicies[1]]
 
     def findShortestPath(self):
         return self.grid[self.start[0]][self.start[1]].findit([])
 
+    def findShortestPathFromStartingHeight(self, startingHeight:int):
+        distances=[]
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                if self.grid[y][x].getValue() == startingHeight:
+                    distances.append(self.grid[y][x].findit([]))
 
-    def getStart(self):
-        return self.start
+        return sorted(distances)[0]
 
     def getEnd(self):
         return self.end
@@ -78,3 +85,18 @@ class Terrain:
 
     def clearNodesVisited(self):
         self.nodesVisited.clear()
+
+    def addPath(self, chain:list):
+        self.paths.append(chain)
+
+    def compileAndSavePaths(self):
+        origBoard = [list(map(lambda x:chr(x.getValue()+97), line)) for line in self.grid]
+
+        for path in self.paths:
+            outBoard=deepcopy(origBoard)
+            for point in path:
+                outBoard[point[0]][point[1]] = "*"
+
+            print("\n".join(["".join(line) for line in outBoard]))
+
+        print(len(self.paths))
