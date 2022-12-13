@@ -13,30 +13,33 @@ class Node:
         self.neighbors = []
         self.terrain = terrain
         self.hash=hash(self.pos)
+        self.chain=[]
 
     def findit(self, chainIn:list, costInit=0):
-        chains=[]
-        chainIn.append(self)
+        costs=[]
+        # print(chainIn)
+        self.chain.extend(chainIn)
+        
         if self.pos == self.terrain.getEnd():
             self.terrain.setMinCostCache(costInit)
-            return chainIn
+            return costInit
+
+        chainIn.append(self.pos)
         for neighbor in self.neighbors:
             cost=costInit + self.calculateCost(neighbor)
-            
-            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor in chainIn:
+            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor.pos in self.chain:
                 continue
-            chainOut=copy(chainIn)
-            neighborsShortestChain=neighbor.findit(chainOut, cost)
-            if neighborsShortestChain is not None:
-                chains.append(neighborsShortestChain)
-        if len(chains) <= 0:
+            neighborsShortestCost=neighbor.findit(chainIn, cost)
+            if neighborsShortestCost is not None:
+                costs.append(neighborsShortestCost)
+        
+        self.chain = []
+        
+        if len(costs) <= 0:
             return None
-        cs=sorted(chains, key=lambda chain:sum([chain[i+1].calculateCost(chain[i]) for i in range(len(chain)-1)]))
-        chainIn.extend(cs[0])
-        if len(chains) > 1:
-            print()
-        tmp = set() 
-        return [n for n in chainIn if n not in tmp and tmp.add(n) is None]
+        chainIn.remove(self.pos)
+        
+        return sorted(costs)[0]
 
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor)
@@ -64,7 +67,10 @@ class Node:
         return self.hash
 
     def sortNeighbors(self):
+        # self.neighbors.sort(key=lambda n:(n.getValue(), math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2))), reverse=True)
         self.neighbors.sort(key=lambda n:math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2)))
+        if self.pos == (20,3):
+            [print(math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2))) for n in self.neighbors]
 
     
     def getValue(self):
