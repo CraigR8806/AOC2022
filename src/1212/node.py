@@ -13,33 +13,30 @@ class Node:
         self.neighbors = []
         self.terrain = terrain
         self.hash=hash(self.pos)
-        self.cameFrom=None
         self.cachedMinFromHere=math.inf
-        self.cachedChain=None
 
-    def findit(self, cameFrom=None, costInit=0):
+    def findit(self, chainIn:list, cameFrom=None, costInit=0):
         costs=[]
-        self.cameFrom=cameFrom
-        self.cachedChain=None
         if self.cachedMinFromHere != math.inf:
+            self.terrain.clearNodesVisited()
             return costInit + self.cachedMinFromHere
-        
+        self.terrain.addNodeVisited(self.pos)
         
         if self.pos == self.terrain.getEnd():
             self.terrain.setMinCostCache(costInit)
+            self.terrain.clearNodesVisited()
             return costInit
-
-       
-        chain=self.getCameFrom()
         
 
         for neighbor in self.neighbors:
             cost=costInit + self.calculateCost(neighbor)
             
 
-            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor.pos in chain:
+            if cost >= self.terrain.getMinCostCache() or neighbor.getValue() - self.value > 1 or neighbor.pos in self.terrain.getNodesVisited() or neighbor.pos in chainIn:
                 continue
-            neighborsShortestCost=neighbor.findit(self, cost)
+            chainIn.append(self.pos)
+            neighborsShortestCost=neighbor.findit(chainIn, self, cost)
+            chainIn.pop()
             if neighborsShortestCost is not None:
                 costs.append(neighborsShortestCost)
         
@@ -50,9 +47,6 @@ class Node:
         lowestCost=sorted(costs)[0]
 
         self.cachedMinFromHere=lowestCost-costInit
-
-        if self.terrain.getMinCostCache() != math.inf:
-            print()
         
         return lowestCost
 

@@ -46,6 +46,7 @@ class Terrain:
                 node.sortNeighbors()
 
         self.costCache = math.inf
+        self.nodesVisited=[]
 
     def __getitem__(self, indicies):
         if not isinstance(indicies, tuple):
@@ -54,7 +55,7 @@ class Terrain:
         return self.grid[indicies[0]][indicies[1]]
 
     def findShortestPath(self):
-        return self.grid[self.start[0]][self.start[1]].findit()
+        return self.grid[self.start[0]][self.start[1]].findit([])
 
 
     def getStart(self):
@@ -68,3 +69,12 @@ class Terrain:
 
     def getMinCostCache(self):
         return self.costCache
+
+    def getNodesVisited(self):
+        return self.nodesVisited
+
+    def addNodeVisited(self, node):
+        self.nodesVisited.append(node)
+
+    def clearNodesVisited(self):
+        self.nodesVisited.clear()
