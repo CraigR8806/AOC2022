@@ -14,10 +14,12 @@ class Node:
         self.terrain = terrain
         self.hash=hash(self.pos)
         self.chain=[]
+        self.cachedMinFromHere=math.inf
 
     def findit(self, chainIn:list, costInit=0):
         costs=[]
-        # print(chainIn)
+        if self.cachedMinFromHere != math.inf:
+            return costInit + self.cachedMinFromHere
         self.chain.extend(chainIn)
         
         if self.pos == self.terrain.getEnd():
@@ -35,11 +37,16 @@ class Node:
         
         self.chain = []
         
+        
         if len(costs) <= 0:
             return None
         chainIn.remove(self.pos)
+
+        lowestCost=sorted(costs)[0]
+
+        self.cachedMinFromHere=lowestCost-costInit
         
-        return sorted(costs)[0]
+        return lowestCost
 
     def addNeighbor(self, neighbor):
         self.neighbors.append(neighbor)
@@ -67,10 +74,7 @@ class Node:
         return self.hash
 
     def sortNeighbors(self):
-        # self.neighbors.sort(key=lambda n:(n.getValue(), math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2))), reverse=True)
         self.neighbors.sort(key=lambda n:math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2)))
-        if self.pos == (20,3):
-            [print(math.sqrt(((n.pos[0]-self.terrain.getEnd()[0])**2) + ((n.pos[1]-self.terrain.getEnd()[1])**2))) for n in self.neighbors]
 
     
     def getValue(self):

@@ -20,10 +20,10 @@ def parseTerrain(lines):
 
 
 # sampleTerrain=parseTerrain(getStripedLinesFromFile('AOC2022/src/1212/sampleInput.data'))
-sampleTerrain=parseTerrain(getStripedLinesFromFile('src/1212/sampleInput.data'))
-terrain=parseTerrain(getStripedLinesFromFile('src/1212/input.data'))
+# sampleTerrain=parseTerrain(getStripedLinesFromFile('src/1212/sampleInput.data'))
+# terrain=parseTerrain(getStripedLinesFromFile('src/1212/input.data'))
+terrain=parseTerrain(getStripedLinesFromFile('AOC2022/src/1212/input.data'))
 
 
-
-print(sampleTerrain.findShortestPath())
+# print(sampleTerrain.findShortestPath())
 print(terrain.findShortestPath())
