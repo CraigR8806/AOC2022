@@ -46,7 +46,7 @@ def showMap(map):
     return "\n".join(["".join(line) for line in map])
 
 def getOuterPoint(center, yLevel, dist, start):
-    return (yLevel, (-1 if start else 1)*abs(center[0] - yLevel) + center[1] - dist)
+    return (yLevel, (1 if start else -1)*abs(center[0] - yLevel) + center[1] - dist)
 
 
 
@@ -61,7 +61,7 @@ def parseSensors(lines):
     sensorRanges=[]
     cbPoss=[]
     for line in lines:
-        posM=re.findall("([0-9]+)", line)
+        posM=re.findall("(-?[0-9]+)", line)
         pos=(int(posM[1]), int(posM[0]))
         cbPos=(int(posM[3]), int(posM[2]))
         sensor = Sensor(pos,cbPos)
@@ -110,14 +110,13 @@ def getNumberOfSpotsBeaconsCannotBeOnLine(sensors:list, mn:tuple, mx:tuple, line
     for sensor in sensors:
         pos=sensor.getPosition()
         dist=sensor.getManahattanDistance()
-        startY=pos[0] - dist - 1
-        endY=pos[0] + dist + 1
+        startY=pos[0] - dist
+        endY=pos[0] + dist
         if line >= startY and line <= endY:
-            startX=getOuterPoint(pos, line, dist, True)[1] - 1
-            endX=getOuterPoint(pos, line, dist, False)[1] + 1
-            for x in range(mn[1], mx[1]):
-                if x >= startX and x <= endX:
-                    noBeaconPoints.add((line, x))
+            startX=getOuterPoint(pos, line, dist, True)[1]
+            endX=getOuterPoint(pos, line, -dist, False)[1]
+            for x in range(startX, endX): 
+                noBeaconPoints.add((line, x))
 
     return len(noBeaconPoints)
 
